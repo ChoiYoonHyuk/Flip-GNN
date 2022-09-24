@@ -1,0 +1,94 @@
+absl-py @ file:///tmp/build/80754af9/absl-py_1623861369333/work
+aiohttp @ file:///tmp/build/80754af9/aiohttp_1637857092750/work
+aiosignal @ file:///tmp/build/80754af9/aiosignal_1637843061372/work
+astor==0.8.1
+astunparse==1.6.3
+async-timeout @ file:///tmp/build/80754af9/async-timeout_1637851218186/work
+asynctest==0.13.0
+attrs @ file:///tmp/build/80754af9/attrs_1620827162558/work
+blinker==1.4
+brotlipy==0.7.0
+cachetools @ file:///tmp/build/80754af9/cachetools_1619597386817/work
+certifi==2021.10.8
+cffi @ file:///home/conda/feedstock_root/build_artifacts/cffi_1625835301720/work
+chardet @ file:///home/conda/feedstock_root/build_artifacts/chardet_1610093487176/work
+charset-normalizer @ file:///home/conda/feedstock_root/build_artifacts/charset-normalizer_1626371162869/work
+click==8.0.3
+colorama @ file:///home/conda/feedstock_root/build_artifacts/colorama_1602866480661/work
+cryptography @ file:///home/conda/feedstock_root/build_artifacts/cryptography_1616851478755/work
+cycler==0.10.0
+decorator @ file:///home/conda/feedstock_root/build_artifacts/decorator_1621187651333/work
+flatbuffers @ file:///home/ktietz/cip/python-flatbuffers_1634039120618/work
+fonttools==4.25.0
+frozenlist @ file:///tmp/build/80754af9/frozenlist_1637767116045/work
+gast @ file:///Users/ktietz/demo/mc3/conda-bld/gast_1628588903283/work
+geometric==0.9.7.2
+google-auth @ file:///tmp/build/80754af9/google-auth_1626320605116/work
+google-auth-oauthlib @ file:///tmp/build/80754af9/google-auth-oauthlib_1617120569401/work
+google-pasta @ file:///Users/ktietz/demo/mc3/conda-bld/google-pasta_1630577991354/work
+googledrivedownloader @ file:///home/conda/feedstock_root/build_artifacts/googledrivedownloader_1619807768586/work
+grpcio @ file:///tmp/build/80754af9/grpcio_1637578017926/work
+h5py @ file:///tmp/build/80754af9/h5py_1593454119955/work
+idna @ file:///home/conda/feedstock_root/build_artifacts/idna_1609836280497/work
+importlib-metadata @ file:///tmp/build/80754af9/importlib-metadata_1638529598726/work
+Jinja2 @ file:///home/conda/feedstock_root/build_artifacts/jinja2_1621419064915/work
+joblib @ file:///home/conda/feedstock_root/build_artifacts/joblib_1612898609989/work
+Keras-Preprocessing @ file:///tmp/build/80754af9/keras-preprocessing_1612283640596/work
+kiwisolver @ file:///tmp/build/80754af9/kiwisolver_1612282414123/work
+Markdown @ file:///tmp/build/80754af9/markdown_1614363832606/work
+MarkupSafe @ file:///home/conda/feedstock_root/build_artifacts/markupsafe_1621455667184/work
+matplotlib @ file:///tmp/build/80754af9/matplotlib-suite_1628003481308/work
+mkl-fft==1.3.0
+mkl-random @ file:///tmp/build/80754af9/mkl_random_1626179032232/work
+mkl-service==2.4.0
+multidict @ file:///tmp/build/80754af9/multidict_1607367738239/work
+munkres==1.1.4
+networkx @ file:///tmp/build/80754af9/networkx_1627459939258/work
+numpy @ file:///tmp/build/80754af9/numpy_and_numpy_base_1626264701743/work
+oauthlib @ file:///tmp/build/80754af9/oauthlib_1623060228408/work
+olefile==0.46
+opt-einsum @ file:///tmp/build/80754af9/opt_einsum_1621500238896/work
+packaging @ file:///home/conda/feedstock_root/build_artifacts/packaging_1637239678211/work
+pandas==1.3.1
+Pillow @ file:///tmp/build/80754af9/pillow_1625655818400/work
+POT @ file:///home/conda/feedstock_root/build_artifacts/pot_1640958372103/work
+protobuf==3.17.2
+pyasn1 @ file:///Users/ktietz/demo/mc3/conda-bld/pyasn1_1629708007385/work
+pyasn1-modules==0.2.8
+pycparser @ file:///home/conda/feedstock_root/build_artifacts/pycparser_1593275161868/work
+PyJWT @ file:///tmp/build/80754af9/pyjwt_1619651626416/work
+pyOpenSSL @ file:///home/conda/feedstock_root/build_artifacts/pyopenssl_1608055815057/work
+pyparsing==2.4.7
+PySocks @ file:///home/conda/feedstock_root/build_artifacts/pysocks_1610291444829/work
+python-dateutil @ file:///home/conda/feedstock_root/build_artifacts/python-dateutil_1626286286081/work
+python-louvain @ file:///home/conda/feedstock_root/build_artifacts/python-louvain_1609125227889/work
+pytz @ file:///home/conda/feedstock_root/build_artifacts/pytz_1612179539967/work
+requests @ file:///home/conda/feedstock_root/build_artifacts/requests_1626393743643/work
+requests-oauthlib==1.3.0
+rsa @ file:///tmp/build/80754af9/rsa_1614366226499/work
+scikit-learn @ file:///tmp/build/80754af9/scikit-learn_1621370326158/work
+scipy @ file:///tmp/build/80754af9/scipy_1618852618548/work
+seaborn @ file:///tmp/build/80754af9/seaborn_1629307859561/work
+six @ file:///tmp/build/80754af9/six_1623709665295/work
+tensorboard @ file:///home/builder/ktietz/aggregate/tensorflow_recipes/ci_te/tensorboard_1614593728657/work/tmp_pip_dir
+tensorboard-plugin-wit==1.6.0
+tensorflow @ file:///home/builder/ktietz/aggregate/tensorflow_recipes/ci_cpu/tensorflow-base_1614346860851/work/tensorflow_pkg/tensorflow-2.4.1-cp37-cp37m-linux_x86_64.whl
+tensorflow-estimator @ file:///home/builder/adipietro/tf/tensorflow-estimator_1630508970172/work/tensorflow_estimator-2.6.0-py2.py3-none-any.whl
+termcolor==1.1.0
+threadpoolctl @ file:///home/conda/feedstock_root/build_artifacts/threadpoolctl_1626092076920/work
+torch==1.9.0
+torch-cluster==1.5.9
+torch-geometric @ file:///usr/share/miniconda/envs/test/conda-bld/pytorch-geometric_1624734501396/work
+torch-scatter @ file:///usr/share/miniconda/envs/test/conda-bld/pytorch-scatter_1627532501841/work
+torch-sparse @ file:///usr/share/miniconda/envs/test/conda-bld/pytorch-sparse_1627567941259/work
+torch-spline-conv==1.2.1
+torchmetrics @ file:///home/conda/feedstock_root/build_artifacts/torchmetrics_1651830953557/work
+torchvision==0.10.0
+tornado @ file:///home/conda/feedstock_root/build_artifacts/tornado_1610094704591/work
+tqdm @ file:///home/conda/feedstock_root/build_artifacts/tqdm_1628985621016/work
+typing-extensions @ file:///tmp/build/80754af9/typing_extensions_1624965014186/work
+urllib3 @ file:///home/conda/feedstock_root/build_artifacts/urllib3_1624634538755/work
+Werkzeug @ file:///tmp/build/80754af9/werkzeug_1635505089296/work
+wrapt @ file:///tmp/build/80754af9/wrapt_1638420625940/work
+yarl @ file:///tmp/build/80754af9/yarl_1606939952652/work
+zipp @ file:///tmp/build/80754af9/zipp_1633618647012/work
