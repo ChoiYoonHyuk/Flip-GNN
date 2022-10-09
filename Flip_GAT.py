@@ -42,30 +42,39 @@ data_id = args.data
 if data_id == 0:
     dataset = Planetoid(root='/tmp/Cora', name='Cora')
     alpha, beta = .1, .01
+    balance = 2
 elif data_id == 1:
     dataset = Planetoid(root='/tmp/Citeseer', name='Citeseer')
     alpha, beta = .01, .001
+    balance = 2
 elif data_id == 2:
     dataset = Planetoid(root='/tmp/Pubmed', name='Pubmed')
     alpha, beta = 1, .001
+    balance = 5
 elif data_id == 3:
     dataset = WikipediaNetwork(root='/tmp/Chameleon', name='chameleon')
     alpha, beta = 1, .01
+    balance = 2
 elif data_id == 4:
     dataset = WikipediaNetwork(root='/tmp/Squirrel', name='squirrel')
     alpha, beta = 1, 1
+    balance = 2
 elif data_id == 5:
     dataset = Actor(root='/tmp/Actor')
     alpha, beta = .1, .1
+    balance = 2
 elif data_id == 6:
     dataset = WebKB(root='/tmp/Cornell', name='Cornell')
     alpha, beta = .1, .01
+    balance = 5
 elif data_id == 7:
     dataset = WebKB(root='/tmp/Texas', name='Texas')
     alpha, beta = .1, .01
+    balance = 5
 else:
     dataset = WebKB(root='/tmp/Wisconsin', name='Wisconsin')
     alpha, beta = .1, .01
+    balance = 5
 
 
 
@@ -315,7 +324,7 @@ class GATConv(MessagePassing):
         zeros(self.bias)
 
 
-    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj, idx,
+    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 edge_attr: OptTensor = None, size: Size = None,
                 return_attention_weights=None):
 
@@ -335,12 +344,8 @@ class GATConv(MessagePassing):
 
         x = (x_src, x_dst)
 
-        if idx == 1:
-            alpha_src = (x_src * -self.att_src).sum(dim=-1)
-            alpha_dst = None if x_dst is None else (x_dst * -self.att_dst).sum(-1)
-        else:
-            alpha_src = (x_src * self.att_src).sum(dim=-1)
-            alpha_dst = None if x_dst is None else (x_dst * self.att_dst).sum(-1)
+        alpha_src = (x_src * self.att_src).sum(dim=-1)
+        alpha_dst = None if x_dst is None else (x_dst * self.att_dst).sum(-1)
         alpha = (alpha_src, alpha_dst)
         
         
@@ -444,7 +449,7 @@ class Net(torch.nn.Module):
         if idx == 0 and self.k_value == 1:
             model.state_dict()['conv1.lin_src.weight'].data.copy_(src.T)
             model.state_dict()['conv1.lin_dst.weight'].data.copy_(dst.T)
-            # Return attention to original place
+            # Move attention vector to original space
             model.state_dict()['conv1.att_src'].data.copy_(-model.state_dict()['conv1.att_src'].detach().clone())
             model.state_dict()['conv1.att_dst'].data.copy_(-model.state_dict()['conv1.att_dst'].detach().clone())
             self.k_value = 0
@@ -458,20 +463,20 @@ class Net(torch.nn.Module):
             
             model.state_dict()['conv1.lin_src.weight'].data.copy_(src.T)
             model.state_dict()['conv1.lin_dst.weight'].data.copy_(dst.T)
-            # Flip attention vector (multiply -1)
+            # Flip attention vector by multiplying -1
             model.state_dict()['conv1.att_src'].data.copy_(-model.state_dict()['conv1.att_src'].detach().clone())
             model.state_dict()['conv1.att_dst'].data.copy_(-model.state_dict()['conv1.att_dst'].detach().clone())
             self.k_value = 1
         
-        x = F.relu(self.conv1(x, edge_index, 0))
+        x = F.relu(self.conv1(x, edge_index))
         x = F.dropout(x, p=0.7, training=self.training)
         
         # Then flip hidden features
         # We don't need to adjust attention vector for second convolution
         if idx == 0:
-            x = self.conv2(x, edge_index, 0)
+            x = self.conv2(x, edge_index)
         else:
-            x = self.conv2(-x, edge_index, 0)            
+            x = self.conv2(-x, edge_index)            
         
         return F.log_softmax(x, dim=1)
         
@@ -494,7 +499,7 @@ for epoch in tqdm(range(epoch)):
 
     model.train()
     
-    if idx == 0:
+    if epoch % balance == 0:
         out = model(without_bias, data.edge_index, 0)
     else:
         out = model(with_bias, data.edge_index, 1)
@@ -502,7 +507,7 @@ for epoch in tqdm(range(epoch)):
     loss = F.nll_loss(out[data.train_mask], data.y[data.train_mask])
     loss.backward()
     # Adjust gradients
-    if idx == 0:
+    if epoch % balance == 0:
         model.conv1.lin_src.weight.grad = model.conv1.lin_src.weight.grad.clone() * alpha
         model.conv1.lin_dst.weight.grad = model.conv1.lin_dst.weight.grad.clone() * alpha
     else:
@@ -513,7 +518,7 @@ for epoch in tqdm(range(epoch)):
     with torch.no_grad():
         model.eval()
         
-        if idx == 0:
+        if epoch % balance == 0:
             _, pred = model(without_bias, data.edge_index, 0).max(dim=1)
         else:
             _, pred = model(with_bias, data.edge_index, 1).max(dim=1)
