@@ -59,7 +59,7 @@ elif data_id == 5:
     alpha, beta = .1, .1
 elif data_id == 6:
     dataset = WebKB(root='/tmp/Cornell', name='Cornell')
-    alpha, beta = .1, .1
+    alpha, beta = .1, .01
 elif data_id == 7:
     dataset = WebKB(root='/tmp/Texas', name='Texas')
     alpha, beta = .1, .01
