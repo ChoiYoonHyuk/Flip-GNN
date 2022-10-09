@@ -335,9 +335,6 @@ class GATConv(MessagePassing):
 
         x = (x_src, x_dst)
 
-        #######################################################
-        # Negative constant (-1) is applied for flipped space #
-        #######################################################
         if idx == 1:
             alpha_src = (x_src * -self.att_src).sum(dim=-1)
             alpha_dst = None if x_dst is None else (x_dst * -self.att_dst).sum(-1)
@@ -447,6 +444,7 @@ class Net(torch.nn.Module):
         if idx == 0 and self.k_value == 1:
             model.state_dict()['conv1.lin_src.weight'].data.copy_(src.T)
             model.state_dict()['conv1.lin_dst.weight'].data.copy_(dst.T)
+            # Return attention to original place
             model.state_dict()['conv1.att_src'].data.copy_(-model.state_dict()['conv1.att_src'].detach().clone())
             model.state_dict()['conv1.att_dst'].data.copy_(-model.state_dict()['conv1.att_dst'].detach().clone())
             self.k_value = 0
@@ -460,13 +458,11 @@ class Net(torch.nn.Module):
             
             model.state_dict()['conv1.lin_src.weight'].data.copy_(src.T)
             model.state_dict()['conv1.lin_dst.weight'].data.copy_(dst.T)
+            # Flip attention vector (multiply -1)
             model.state_dict()['conv1.att_src'].data.copy_(-model.state_dict()['conv1.att_src'].detach().clone())
             model.state_dict()['conv1.att_dst'].data.copy_(-model.state_dict()['conv1.att_dst'].detach().clone())
             self.k_value = 1
         
-        # If idx is 1 (flipped space) 
-        # We multiply negative constant to attention vector 
-        # Please refer to line 342
         x = F.relu(self.conv1(x, edge_index, 0))
         x = F.dropout(x, p=0.7, training=self.training)
         
