@@ -23,7 +23,7 @@ from torch_geometric.nn.conv import MessagePassing
 # Please refer to Flip_GCN.py for further descrptions
 # We refer to attention of pytorch_geometric implementation
 # Our main source code starts from line 429
-
+###########################################################
 
 device = torch.device('cuda:1' if torch.cuda.is_available() else 'cpu')
 
@@ -47,7 +47,7 @@ elif data_id == 1:
     alpha, beta = .01, .001
 elif data_id == 2:
     dataset = Planetoid(root='/tmp/Pubmed', name='Pubmed')
-    alpha, beta = 1, .001
+    alpha, beta = 1, .0001
 elif data_id == 3:
     dataset = WikipediaNetwork(root='/tmp/Chameleon', name='chameleon')
     alpha, beta = 1, .01
