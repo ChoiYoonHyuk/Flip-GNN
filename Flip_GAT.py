@@ -512,8 +512,6 @@ for epoch in tqdm(range(epoch)):
     else:
         model.conv1.lin_src.weight.grad = model.conv1.lin_src.weight.grad.clone() * beta
         model.conv1.lin_dst.weight.grad = model.conv1.lin_dst.weight.grad.clone() * beta
-        #model.conv1.att_src.grad = -model.conv1.att_src.grad.detach().clone()
-        #model.conv1.att_dst.grad = -model.conv1.att_dst.grad.detach().clone()
     optim.step()
         
     with torch.no_grad():
