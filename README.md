@@ -1,6 +1,10 @@
 # Flip-GCN
 
-python3 Flip GCN.py 0~8
+python3 Flip_GCN.py [0~8]
+
+# Flip-GAT
+
+python3 Flip_GAT.py [0~8]
 
 Each number indicates a dataset below
   
