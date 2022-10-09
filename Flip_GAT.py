@@ -47,7 +47,7 @@ elif data_id == 1:
     alpha, beta = .01, .001
 elif data_id == 2:
     dataset = Planetoid(root='/tmp/Pubmed', name='Pubmed')
-    alpha, beta = 1, .0001
+    alpha, beta = 1, .001
 elif data_id == 3:
     dataset = WikipediaNetwork(root='/tmp/Chameleon', name='chameleon')
     alpha, beta = 1, .01
@@ -447,6 +447,8 @@ class Net(torch.nn.Module):
         if idx == 0 and self.k_value == 1:
             model.state_dict()['conv1.lin_src.weight'].data.copy_(src.T)
             model.state_dict()['conv1.lin_dst.weight'].data.copy_(dst.T)
+            model.state_dict()['conv1.att_src'].data.copy_(-model.state_dict()['conv1.att_src'].detach().clone())
+            model.state_dict()['conv1.att_dst'].data.copy_(-model.state_dict()['conv1.att_dst'].detach().clone())
             self.k_value = 0
         
         # Adjust plane for flipped space
@@ -458,12 +460,14 @@ class Net(torch.nn.Module):
             
             model.state_dict()['conv1.lin_src.weight'].data.copy_(src.T)
             model.state_dict()['conv1.lin_dst.weight'].data.copy_(dst.T)
+            model.state_dict()['conv1.att_src'].data.copy_(-model.state_dict()['conv1.att_src'].detach().clone())
+            model.state_dict()['conv1.att_dst'].data.copy_(-model.state_dict()['conv1.att_dst'].detach().clone())
             self.k_value = 1
         
         # If idx is 1 (flipped space) 
         # We multiply negative constant to attention vector 
         # Please refer to line 342
-        x = F.relu(self.conv1(x, edge_index, idx))
+        x = F.relu(self.conv1(x, edge_index, 0))
         x = F.dropout(x, p=0.7, training=self.training)
         
         # Then flip hidden features
@@ -508,6 +512,8 @@ for epoch in tqdm(range(epoch)):
     else:
         model.conv1.lin_src.weight.grad = model.conv1.lin_src.weight.grad.clone() * beta
         model.conv1.lin_dst.weight.grad = model.conv1.lin_dst.weight.grad.clone() * beta
+        #model.conv1.att_src.grad = -model.conv1.att_src.grad.detach().clone()
+        #model.conv1.att_dst.grad = -model.conv1.att_dst.grad.detach().clone()
     optim.step()
         
     with torch.no_grad():
