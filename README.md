@@ -1,3 +1,5 @@
+We thank the reviewers and SPC to spending their time for reviewing our papers. We revised our papers based on their useful comments.
+
 # Flip-GCN
 
 python3 Flip_GCN.py [0~8]
