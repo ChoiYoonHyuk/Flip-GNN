@@ -1,4 +1,4 @@
-We thank the reviewers and SPC to spending their time for reviewing our papers. We revised our papers based on their useful comments.
+We thank the reviewers and SPC to spending their time for reviewing our papers. We revised our papers based on their useful comments and will update it continuously.
 
 # Flip-GCN
 
