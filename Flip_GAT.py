@@ -41,7 +41,7 @@ data_id = args.data
 
 if data_id == 0:
     dataset = Planetoid(root='/tmp/Cora', name='Cora')
-    alpha, beta = .1, .01
+    alpha, beta = 1, .1
     balance = 2
 elif data_id == 1:
     dataset = Planetoid(root='/tmp/Citeseer', name='Citeseer')
@@ -53,7 +53,7 @@ elif data_id == 2:
     balance = 5
 elif data_id == 3:
     dataset = WikipediaNetwork(root='/tmp/Chameleon', name='chameleon')
-    alpha, beta = 1, .01
+    alpha, beta = 1, .1
     balance = 2
 elif data_id == 4:
     dataset = WikipediaNetwork(root='/tmp/Squirrel', name='squirrel')
@@ -65,15 +65,15 @@ elif data_id == 5:
     balance = 2
 elif data_id == 6:
     dataset = WebKB(root='/tmp/Cornell', name='Cornell')
-    alpha, beta = .1, .01
+    alpha, beta = .1, .0001
     balance = 5
 elif data_id == 7:
     dataset = WebKB(root='/tmp/Texas', name='Texas')
-    alpha, beta = .1, .01
+    alpha, beta = .1, .0001
     balance = 5
 else:
     dataset = WebKB(root='/tmp/Wisconsin', name='Wisconsin')
-    alpha, beta = .1, .01
+    alpha, beta = .1, .001
     balance = 5
 
 
@@ -510,9 +510,21 @@ for epoch in tqdm(range(epoch)):
     if epoch % balance == 0:
         model.conv1.lin_src.weight.grad = model.conv1.lin_src.weight.grad.clone() * alpha
         model.conv1.lin_dst.weight.grad = model.conv1.lin_dst.weight.grad.clone() * alpha
+        model.conv1.att_src.grad = model.conv1.att_src.grad.clone() * alpha
+        model.conv1.att_dst.grad = model.conv1.att_dst.grad.clone() * alpha
+        model.conv2.lin_src.weight.grad = model.conv2.lin_src.weight.grad.clone() * alpha
+        model.conv2.lin_dst.weight.grad = model.conv2.lin_dst.weight.grad.clone() * alpha
+        model.conv2.att_src.grad = model.conv2.att_src.grad.clone() * alpha
+        model.conv2.att_dst.grad = model.conv2.att_dst.grad.clone() * alpha
     else:
         model.conv1.lin_src.weight.grad = model.conv1.lin_src.weight.grad.clone() * beta
         model.conv1.lin_dst.weight.grad = model.conv1.lin_dst.weight.grad.clone() * beta
+        model.conv1.att_src.grad = model.conv1.att_src.grad.clone() * beta
+        model.conv1.att_dst.grad = model.conv1.att_dst.grad.clone() * beta
+        model.conv2.lin_src.weight.grad = model.conv2.lin_src.weight.grad.clone() * beta
+        model.conv2.lin_dst.weight.grad = model.conv2.lin_dst.weight.grad.clone() * beta
+        model.conv2.att_src.grad = model.conv2.att_src.grad.clone() * beta
+        model.conv2.att_dst.grad = model.conv2.att_dst.grad.clone() * beta
     optim.step()
         
     with torch.no_grad():

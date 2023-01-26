@@ -30,10 +30,10 @@ data_id = args.data
 
 if data_id == 0:
     dataset = Planetoid(root='/tmp/Cora', name='Cora')
-    alpha, beta = .1, .01
+    alpha, beta = .1, .02
 elif data_id == 1:
     dataset = Planetoid(root='/tmp/Citeseer', name='Citeseer')
-    alpha, beta = .001, .001
+    alpha, beta = .01, .001
 elif data_id == 2:
     dataset = Planetoid(root='/tmp/Pubmed', name='Pubmed')
     alpha, beta = 1, .01
@@ -42,24 +42,26 @@ elif data_id == 3:
     alpha, beta = 1, .0001
 elif data_id == 4:
     dataset = WikipediaNetwork(root='/tmp/Squirrel', name='squirrel')
-    alpha, beta = 1, 1
+    alpha, beta = 1, .01
 elif data_id == 5:
     dataset = Actor(root='/tmp/Actor')
-    alpha, beta = .1, .1
+    alpha, beta = .0001, .0001
 elif data_id == 6:
     dataset = WebKB(root='/tmp/Cornell', name='Cornell')
-    alpha, beta = .01, .1
+    alpha, beta = 1, .0001
 elif data_id == 7:
     dataset = WebKB(root='/tmp/Texas', name='Texas')
-    alpha, beta = .1, .01
+    alpha, beta = 1, .0001
 elif data_id == 8:
     dataset = WebKB(root='/tmp/Wisconsin', name='Wisconsin')
-    alpha, beta = .1, 1
+    alpha, beta = .01, .001
     
 
 data = dataset[0].to(device)
-print(dataset)
 
+wrt = dataset.root[5:]
+
+f = open('./convergence/' + wrt + '.txt', 'a')
 
 # Remove outlier class in Chameleon / Squirrel / Actor
 if dataset.root == '/tmp/Chameleon' or dataset.root == '/tmp/Squirrel' or dataset.root == '/tmp/Actor':
@@ -161,10 +163,12 @@ class Net(torch.nn.Module):
         self.k_value = 0
         
         # First flip point (0.5, ..., 0.5, 0)
-        self.t = torch.cat((torch.empty(dataset.num_node_features).fill_(.5).to(device), torch.zeros(1).to(device)))
+        #self.t = torch.cat((torch.empty(dataset.num_node_features).fill_(.5).to(device), torch.zeros(1).to(device)))
+        self.t = torch.cat((torch.empty(dataset.num_node_features).fill_(.0).to(device), torch.zeros(1).to(device)))
         
     def forward(self, x, edge_index, idx):
         state = model.state_dict()['conv1.weight'].detach().clone()
+        bias = state[data.num_features]
         
         # If the boundary is flipped and the input is non-flipped (data.x), set bias as 0
         if idx == 0 and self.k_value == 1:
@@ -174,8 +178,7 @@ class Net(torch.nn.Module):
             self.k_value = 0
             
         # If the boundary is non-flipped and the input is flipped (1 - data.x), adjust bias as below
-        elif idx == 1 and self.k_value == 0:            
-            bias = state[data.num_features]
+        elif idx == 1 and self.k_value == 0:
             refine = torch.matmul(self.t, state)
             state[data.num_features] =  - 2 * refine
                         
@@ -201,7 +204,8 @@ optim = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=5e-4)
 
 # Padding feature w.r.t. each space (original and flipped)
 zero, one = torch.zeros(len(data.x), 1).to(device), torch.ones(len(data.x), 1).to(device)
-without_bias, with_bias = torch.cat((data.x, zero), 1), torch.cat((1 - data.x, one), 1)
+#without_bias, with_bias = torch.cat((data.x, zero), 1), torch.cat((1 - data.x, one), 1)
+without_bias, with_bias = torch.cat((data.x, zero), 1), torch.cat((- data.x, one), 1)
 
 idx, start, early_stop = 0, 0, 0
 valid, best_valid, best_value, best_epoch, best_test = 0, 0, 0, 0, 0
@@ -211,7 +215,7 @@ for epoch in tqdm(range(epoch)):
     model.train()
     
     # Based on the hyper-parameter (balance), choose whether to flip or not 
-    if idx % 2 == 0:
+    if idx == 0:
         out = model(without_bias, data.edge_index, 0)
     else:
         out = model(with_bias, data.edge_index, 1)
@@ -219,11 +223,13 @@ for epoch in tqdm(range(epoch)):
     loss = F.nll_loss(out[data.train_mask], data.y[data.train_mask])
     loss.backward()
     # Adjust the gradients
-    if idx % 2 == 0:
+    if idx == 0:
         model.conv1.weight.grad = model.conv1.weight.grad.clone() * alpha
+        model.conv2.weight.grad = model.conv2.weight.grad.clone() * alpha
     else:
         model.conv1.weight.grad = model.conv1.weight.grad.clone() * beta
-        model.conv1.weight.grad[data.num_features] = model.conv1.weight.grad[data.num_features].clone() * 0
+        model.conv2.weight.grad = model.conv2.weight.grad.clone() * beta
+        #model.conv1.weight.grad[data.num_features] = model.conv1.weight.grad[data.num_features].clone() * 0
     optim.step()
     
     early_stop += 1
@@ -232,7 +238,7 @@ for epoch in tqdm(range(epoch)):
         model.eval()
         
         # Evaluation
-        if idx % 2 == 0:
+        if idx == 0:
             _, pred = model(without_bias, data.edge_index, 0).max(dim=1)
         else:
             _, pred = model(with_bias, data.edge_index, 1).max(dim=1)
@@ -242,11 +248,12 @@ for epoch in tqdm(range(epoch)):
         val_acc = correct / data.val_mask.sum().item()
         
         # You can see a test score of flipped points here 
-        '''if idx == 1:
+        if idx == 0:
             test_acc = float(pred[data.test_mask].eq(data.y[data.test_mask]).sum().item()) / data.test_mask.sum().item()
             if test_acc > best_test:
                 best_test = test_acc
-            print('Test: {:4f}'.format(best_test))'''
+            #print('Test: {:4f}'.format(test_acc))
+            f.write('%.3f\n' % test_acc)
         
         # If attains best valudation score, get test score
         if val_acc > best_valid:
@@ -259,5 +266,5 @@ for epoch in tqdm(range(epoch)):
     if multi_learning:
         idx = 1 - idx
     
-    if early_stop > 5000:
+    if early_stop > 2500:
         break
