@@ -16,3 +16,5 @@ python3 Flip_GAT.py [0~8]
 # Another Baselines
 
 For Ortho-GCN, please see https://github.com/KaiGuo20/Ortho-GConv
+
+For H2GCN, please see https://github.com/GitEventhandler/H2GCN-PyTorch
