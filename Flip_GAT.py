@@ -468,15 +468,16 @@ class Net(torch.nn.Module):
             model.state_dict()['conv1.att_dst'].data.copy_(-model.state_dict()['conv1.att_dst'].detach().clone())
             self.k_value = 1
         
-        x = F.relu(self.conv1(x, edge_index))
-        x = F.dropout(x, p=0.7, training=self.training)
-        
         # Then flip hidden features
         # We don't need to adjust attention vector for second convolution
         if idx == 0:
+            x = F.relu(self.conv1(x, edge_index))
+            x = F.dropout(x, p=0.7, training=self.training)
             x = self.conv2(x, edge_index)
         else:
-            x = self.conv2(-x, edge_index)            
+            x = F.relu(-self.conv1(x, edge_index))
+            x = F.dropout(x, p=0.7, training=self.training)
+            x = self.conv2(x, edge_index)            
         
         return F.log_softmax(x, dim=1)
         

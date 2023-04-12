@@ -185,16 +185,17 @@ class Net(torch.nn.Module):
             model.state_dict()['conv1.weight'].data.copy_(state)
             self.k_value = 1
             
-        # First convolution
-        x = F.relu(self.conv1(x, edge_index))
-        x = F.dropout(x, p=0.7, training=self.training)
         
         # If input is non-flipped (idx = 0), proceed to second convolution with zero padding
         if idx == 0:
+            x = F.relu(self.conv1(x, edge_index))
+            x = F.dropout(x, p=0.7, training=self.training)
             x = self.conv2(x, edge_index)
         # If the input is flipped (idx = 1), proceed to second convolution with one padding and flipped -x
         else:
-            x = self.conv2(-x, edge_index)
+            x = F.relu(-self.conv1(x, edge_index))
+            x = F.dropout(x, p=0.7, training=self.training)
+            x = self.conv2(x, edge_index)
             
         return F.log_softmax(x, dim=1)
 
