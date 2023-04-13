@@ -28,7 +28,7 @@ from torch_geometric.typing import Adj, OptPairTensor, OptTensor
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 
-use_calib = 1
+use_calib = 0
 
 lr = 1e-3
 parser = argparse.ArgumentParser(description='Dataset')
