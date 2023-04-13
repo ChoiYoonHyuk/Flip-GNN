@@ -63,16 +63,15 @@ elif data_id == 5:
 elif data_id == 6:
     dataset = WebKB(root='/tmp/Cornell', name='Cornell')
     alpha, sign = .9, -1
-    lam = .03
+    lam = .05
 elif data_id == 7:
     dataset = WebKB(root='/tmp/Texas', name='Texas')
     alpha, sign = .9, -1
-    lam = .04
-elif data_id == 8:
-    dataset = WebKB(root='/tmp/Wisconsin', name='Wisconsin')
-    alpha, sign = .9, 1
     lam = .05
-
+else:
+    dataset = WebKB(root='/tmp/Wisconsin', name='Wisconsin')
+    alpha, sign = .9, -1
+    lam = .05
 
 data = dataset[0].to(device)
 num_class = dataset.num_classes
@@ -121,7 +120,6 @@ if dataset.root == '/tmp/Chameleon' or dataset.root == '/tmp/Squirrel' or datase
 
 if dataset.root == '/tmp/Cornell' or dataset.root == '/tmp/Texas' or dataset.root == '/tmp/Wisconsin':
     num_class = 5
-    lc = 5
     labels = dict()
     
     for x in range(len(data.y)):
@@ -134,10 +132,10 @@ if dataset.root == '/tmp/Cornell' or dataset.root == '/tmp/Texas' or dataset.roo
 
     train_mask, valid_mask, test_mask = [], [], []
     for c in range(5):
-        train_mask.extend(labels[c][0:lc])
-        cut = int((len(labels[c]) - lc) / 2)
-        valid_mask.extend(labels[c][lc:lc+cut])
-        test_mask.extend(labels[c][lc+cut:len(labels[c])])
+        train_mask.extend(labels[c][0:5])
+        cut = int((len(labels[c]) - 5) / 2)
+        valid_mask.extend(labels[c][5:5+cut])
+        test_mask.extend(labels[c][5+cut:len(labels[c])])
     
     train, valid, test = [], [], []
     for x in range(len(data.y)):
